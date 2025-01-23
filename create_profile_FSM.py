@@ -28,25 +28,25 @@ async def get_height(message: Message, state: FSMContext):
     await state.set_state(CreateProfile.getAge)
 
 @router_create_profile.message(CreateProfile.getAge)
-async def get_height(message: Message, state: FSMContext):
+async def get_age(message: Message, state: FSMContext):
     await state.update_data(height=message.text)
     await message.answer(text="Супер! Введите ваш возраст")
     await state.set_state(CreateProfile.getActivity)
 
 @router_create_profile.message(CreateProfile.getActivity)
-async def get_height(message: Message, state: FSMContext):
+async def get_activity(message: Message, state: FSMContext):
     await state.update_data(age=message.text)
     await message.answer(text="Осталось совсем немного! Сколько минут активности у вас в день?")
     await state.set_state(CreateProfile.getCity)
 
 @router_create_profile.message(CreateProfile.getCity)
-async def get_height(message: Message, state: FSMContext):
+async def get_city(message: Message, state: FSMContext):
     await state.update_data(activity=message.text)
     await message.answer(text="В каком городе вы находитесь (напиши по английски)?")
     await state.set_state(CreateProfile.final)
 
 @router_create_profile.message(CreateProfile.final)
-async def get_height(message: Message, state: FSMContext):
+async def get_final(message: Message, state: FSMContext):
     await state.update_data(city=message.text)
     profile_data = await state.get_data()
     await message.answer(text=f"Это данные твоего профиля:\n"

@@ -14,7 +14,6 @@ class FoodLog(StatesGroup):
 @router_food.message(Command("log_food"))
 async def log_food(message: Message, state: FSMContext):
     try:
-        # Разбираем команду
         parts = message.text.split()
         if len(parts) < 2:
             await message.answer(
@@ -23,11 +22,9 @@ async def log_food(message: Message, state: FSMContext):
             )
             return
 
-        # Получаем название продукта
         food_name = ' '.join(parts[1:]).lower()
         user_id = str(message.from_user.id)
 
-        # Проверяем существование профиля
         if user_id not in data_manager.users:
             await message.answer("❌ Сначала создайте профиль с помощью /set_profile")
             return
@@ -42,10 +39,8 @@ async def log_food(message: Message, state: FSMContext):
             )
             return
 
-        # Сохраняем название продукта в состояние
         await state.update_data(food_name=food_name)
         
-        # Переходим в состояние ожидания количества
         await state.set_state(FoodLog.waiting_for_amount)
         
         await message.answer(
@@ -63,18 +58,15 @@ async def log_food(message: Message, state: FSMContext):
 @router_food.message(FoodLog.waiting_for_amount)
 async def process_amount(message: Message, state: FSMContext):
     try:
-        # Получаем количество грамм
         amount = float(message.text)
         
         if amount <= 0:
             await message.answer("❌ Количество должно быть положительным числом")
             return
         
-        # Получаем сохраненные данные
         data = await state.get_data()
         food_name = data['food_name']
         
-        # Логируем продукт
         user_id = str(message.from_user.id)
         result = await data_manager.log_food(user_id, food_name, amount)
         
@@ -89,7 +81,6 @@ async def process_amount(message: Message, state: FSMContext):
                 f"📊 Всего калорий за сегодня: {round(result['total_calories'])} ккал"
             )
         
-        # Очищаем состояние
         await state.clear()
         
     except ValueError:
